@@ -1,41 +1,37 @@
-'use client';
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+"use client";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 type Props = {};
 
 const SuccessPage = (props: Props) => {
-  const { query } = useRouter();
+  const router = useRouter();
+  const query = useSearchParams();
+
   const [responseMessage, setResponseMessage] = useState("");
   const url = "https://uat.esewa.com.np/epay/transrec";
 
-  useEffect(() => {
-    const data = {
-      amt: query?.["amt"],
-      scd: "EPAYTEST",
-      pid: query?.["oid"],
-      rid: query?.["refId"],
-    };
-    const fetchEsewa = async () => {
-      return await axios
-        .post(url, data)
-        .then((res) => res.data)
-        .catch((error) => {
-          console.log("ERROR", error);
-        });
-    };
-    const d = fetchEsewa();
-    setResponseMessage(d as any);
-    console.log("first");
-  }, []);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  if (!query?.["oid"] || !query?.["amt"] || !query?.["refId"]) {
-    return <p>Invalid success URL.</p>;
-  }
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.submit();
+    }
+  }, []);
 
   return (
     <div>
-      SuccessPage: <pre>{responseMessage}</pre>
+      <form
+        ref={formRef}
+        action="https://uat.esewa.com.np/epay/transrec"
+        method="GET"
+      >
+        <input value={query.get("amt") || 0} name="amt" type="hidden" />
+        <input value="EPAYTEST" name="scd" type="hidden" />
+        <input value={query.get("oid") || ""} name="pid" type="hidden" />
+        <input value={query.get("refId") || ""} name="rid" type="hidden" />
+        {/* <input value="Submit" type="submit" /> */}
+      </form>
     </div>
   );
 };
