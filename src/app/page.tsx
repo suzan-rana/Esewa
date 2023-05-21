@@ -83,7 +83,7 @@ export default function Home() {
         />
         <input
           className="bg-white px-5 text-black cursor-pointer py-3 rounded-md"
-          value="Pay 1000$ with Esewa"
+          value="Pay 100$ with Esewa"
           type="submit"
         />
       </form>
